@@ -49,6 +49,8 @@ function PlaneObject(icao) {
         this.position  = null;
         this.position_from_mlat = false
         this.sitedist  = null;
+        this.sitebearing = null;
+        this.siteelevation = null;
 
 	// Data packet numbers
 	this.messages  = null;
@@ -616,6 +618,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data, receiver_s
 
                 if (SitePosition !== null) {
                         this.sitedist = ol.sphere.getDistance(SitePosition, this.position);
+
+                        const deltaLon = SitePosition[0] - data.lon;
+                        const X = Math.cos(data.lat) * Math.sin(deltaLon);
+                        const Y = Math.cos(SitePosition[1]) * Math.sin(data.lat) -
+                            Math.sin(SitePosition[1]) * Math.cos(data.lat) * Math.cos(deltaLon);
+                        this.sitebearing = (360 + Math.atan2(X, Y) * 180 / Math.PI) % 360;
+
+                        if (typeof data.altitude !== "undefined" && SiteAltitude !== null) {
+                                this.siteelevation = Math.atan((data.altitude * 0.3048 - SiteAltitude) / 1000 / this.sitedist) * 180 / Math.PI;
+                        }
                 }
 
                 this.position_from_mlat = false;

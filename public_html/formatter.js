@@ -45,6 +45,14 @@ function format_track_long(track) {
 	return Math.round(track) + DEGREES + NBSP + "(" + TrackDirections[trackDir] + ")";
 }
 
+function format_elevation_long(elevation) {
+	if (elevation === null){
+		return "n/a";
+	}
+	
+	return Math.round(elevation) + DEGREES;
+}
+
 // alt in feet
 function format_altitude_brief(alt, vr, displayUnits) {
 	var alt_text;

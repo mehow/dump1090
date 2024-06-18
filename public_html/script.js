@@ -40,6 +40,7 @@ var TrackedAircraftPositions = 0;
 var TrackedHistorySize = 0;
 
 var SitePosition = null;
+var SiteAltitude = 0;
 
 var LastReceiverTimestamp = 0;
 var StaleReceiverCount = 0;
@@ -516,6 +517,9 @@ function initialize() {
                                 SiteLon = data.lon;
                                 DefaultCenterLat = data.lat;
                                 DefaultCenterLon = data.lon;
+                        }
+                        if (typeof data.alt !== "undefined") {
+                                SiteAltitude = data.alt;
                         }
                         
                         SkyAwareVersion = data.version;
@@ -1442,6 +1446,8 @@ function refreshSelected() {
 
         $('#selected_category').text(selected.category ? selected.category : "n/a");
         $('#selected_sitedist').text(format_distance_long(selected.sitedist, DisplayUnits));
+        $('#selected_sitebearing').text(format_track_long(selected.sitebearing));
+        $('#selected_siteelevation').text(format_elevation_long(selected.siteelevation));
         $('#selected_rssi').text(selected.rssi.toFixed(1) + ' dBFS');
         $('#selected_message_count').text(selected.messages);
         $('#selected_photo_link').html(getFlightAwarePhotoLink(selected.registration));
@@ -1747,6 +1753,8 @@ function refreshTableInfo() {
                         tableplane.tr.cells[17].innerHTML = getAirframesModeSLink(tableplane.icao);
                         tableplane.tr.cells[18].innerHTML = getFlightAwareModeSLink(tableplane.icao, tableplane.flight);
                         tableplane.tr.cells[19].innerHTML = getFlightAwarePhotoLink(tableplane.registration);
+                        tableplane.tr.cells[20].textContent = format_track_brief(tableplane.sitebearing);
+                        tableplane.tr.cells[21].textContent = format_track_brief(tableplane.siteelevation);
                         tableplane.tr.className = classes;
                 }
         }
@@ -1796,6 +1804,8 @@ function sortByRssi()     { sortBy('rssi',    compareNumeric, function(x) { retu
 function sortByLatitude()   { sortBy('lat',   compareNumeric, function(x) { return (x.position !== null ? x.position[1] : null) }); }
 function sortByLongitude()  { sortBy('lon',   compareNumeric, function(x) { return (x.position !== null ? x.position[0] : null) }); }
 function sortByDataSource() { sortBy('data_source',     compareAlpha, function(x) { return x.getDataSource() } ); }
+function sortByBearing()   { sortBy('sitebearing',   compareNumeric, function(x) { return x.sitebearing; }); }
+function sortByElevation() { sortBy('siteelevation', compareNumeric, function(x) { return x.siteelevation; }); }
 
 var sortId = '';
 var sortCompare = null;
